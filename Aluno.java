@@ -3,30 +3,53 @@ import java.util.List;
 
 public class Aluno {
 
-    private List<Integer> notas;
+    private List<Double> notas;
+    private Status status;
 
-    public int calcularMedia(){
-        int soma = this.notas.stream().mapToInt(Integer::intValue).sum();
-        int media = (int) Math.round(soma/this.notas.size());
+    public double calcularMedia(){
+        double soma = this.notas.stream().mapToDouble(Double::doubleValue).sum();
+        double media = soma/this.notas.size();
+        if(media > 6){
+            this.status = AlunoStatus.APROVADO;
+        }else if(media >= 4){
+            this.status = AlunoStatus.REPOSICAO;
+        }else{
+            this.status = AlunoStatus.REPROVADO;
+        }
         return media;
     }
 
     public String getStatus(){
-        double media = this.calcularMedia();
-        if(media >= 60){
-            return "Aprovado";
-        }else if(media >= 40){
-            return "Reposição da menor nota";
-        }else{
-            return "Reprovado";
-        }
+        this.calcularMedia();
+        return status.getValue();
     }
 
-    public void addNota(int nota){
+    public void addNota(double nota){
         if(notas == null){
             notas = new ArrayList<>();
         }
         notas.add(nota);
+    }
+
+    private enum AlunoStatus implements Status{
+        APROVADO{
+            @Override
+            public String getValue() {
+                return "Aprovado";
+            }
+        },
+        REPOSICAO{
+            @Override
+            public String getValue() {
+                return "Reposição da Menor Nota";
+            }
+        },
+        REPROVADO{
+            @Override
+            public String getValue() {
+                return "Reprovado";
+            }
+        }
     }
 
 }
